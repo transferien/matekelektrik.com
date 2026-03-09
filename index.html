@@ -299,7 +299,7 @@ footer{background:var(--dark);padding:44px 6% 24px}
       <div class="contact-items">
         <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-label" id="cl0">Adres</div><div class="contact-value">1555. Sokak No.1, 07600 Manavgat, Antalya, Türkiye</div></div></div>
         <div class="contact-item"><div class="contact-icon">📞</div><div><div class="contact-label" id="cl1">Telefon & WhatsApp</div><div class="contact-value"><a href="tel:+905322468797">+90 532 246 87 97</a><br><a href="tel:+905524638619" style="color:var(--dark);text-decoration:none;">+90 552 463 86 19</a></div></div></div>
-        <div class="contact-item"><div class="contact-icon">✉️</div><div><div class="contact-label" id="cl2">E-Posta</div><div class="contact-value"><a href="/cdn-cgi/l/email-protection#402d2134252b252e24353334322939252c00272d21292c6e232f2d"><span class="__cf_email__" data-cfemail="9ff2feebfaf4faf1fbeaecebedf6e6faf3dff8f2fef6f3b1fcf0f2">[email&#160;protected]</span></a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">✉️</div><div><div class="contact-label" id="cl2">E-Posta</div><div class="contact-value"><span id="emailVal"></span></div></div></div>
         <div class="contact-item"><div class="contact-icon">📸</div><div><div class="contact-label" id="cl3">Instagram</div><div class="contact-value"><a href="https://www.instagram.com/matekendustriyel" target="_blank">@matekendustriyel</a></div></div></div>
       </div>
     </div>
@@ -351,7 +351,7 @@ footer{background:var(--dark);padding:44px 6% 24px}
   </div>
   <div class="footer-bottom">
     <div class="footer-copy">© 2025 Matek Endüstriyel Elektrik. Tüm hakları saklıdır. | Manavgat, Antalya</div>
-    <div class="footer-copy"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="83eee2f7e6e8e6ede7f6f0f7f1eafae6efc3e4eee2eaefade0ecee">[email&#160;protected]</a></div>
+    <div class="footer-copy"><span id="footerEmail"></span></div>
   </div>
 </footer>
 
@@ -543,6 +543,25 @@ function setLang(lang){
   const cat=activeFilter?(activeFilter.id==='fb0'?'all':activeFilter.id==='fb1'?'diesel':activeFilter.id==='fb2'?'ups':'rental'):'all';
   renderProducts(cat);
 }
+  // Email - split to avoid Cloudflare obfuscation
+  (function(){
+    const u='matekendustriyel';
+    const d='gmail.com';
+    const em=u+'@'+d;
+    const a='<a href="mailto:'+em+'" style="color:var(--dark);text-decoration:none;">'+em+'</a>';
+    const el=document.getElementById('emailVal');
+    if(el) el.innerHTML=a;
+    const fe=document.getElementById('footerEmail');
+    if(fe) fe.innerHTML='<a href="mailto:'+em+'" style="color:rgba(255,255,255,0.4);text-decoration:none;">'+em+'</a>';
+  })();
+
+  (function(){
+    var u='matekendustriyel'; var d='gmail.com'; var em=u+'@'+d;
+    var el=document.getElementById('emailVal');
+    if(el) el.innerHTML='<a href="mailto:'+em+'" style="color:var(--dark);text-decoration:none;">'+em+'</a>';
+    var fe=document.getElementById('footerEmail');
+    if(fe) fe.innerHTML='<a href="mailto:'+em+'" style="color:rgba(255,255,255,0.4);text-decoration:none;">'+em+'</a>';
+  })();
 </script>
 </body>
 </html>
