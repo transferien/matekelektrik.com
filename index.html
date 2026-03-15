@@ -16,7 +16,7 @@
 html{scroll-behavior:smooth}
 body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px;background:#fff;border-bottom:2px solid var(--border);box-shadow:0 2px 20px rgba(27,68,176,0.08)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:0 5%;min-height:68px;background:#fff;border-bottom:2px solid var(--border);box-shadow:0 2px 20px rgba(27,68,176,0.08)}
 .nav-logo img{height:34px;width:auto;display:block}
 .nav-links{display:flex;gap:24px;list-style:none;align-items:center}
 .nav-links a{text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;letter-spacing:0.3px;text-transform:uppercase;transition:color .2s}
@@ -28,7 +28,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .lang-btn:hover{border-color:var(--blue);color:var(--blue)}
 .lang-btn.active{background:var(--blue);border-color:var(--blue);color:#fff}
 
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:100px 6% 60px;background:linear-gradient(135deg,#0d1a3a 0%,#1B44B0 60%,#1a3a8a 100%);position:relative;overflow:hidden}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 6% 60px;background:linear-gradient(135deg,#0d1a3a 0%,#1B44B0 60%,#1a3a8a 100%);position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:50px 50px}
 .hero-content{position:relative;z-index:2;max-width:700px}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:100px;padding:7px 18px;font-size:13px;color:rgba(255,255,255,0.9);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;font-weight:500}
@@ -142,6 +142,7 @@ footer{background:var(--dark);padding:44px 6% 24px}
 .social-btn.wa:hover{background:#25d366;border-color:#25d366}
 .social-btn.ig:hover{background:#e1306c;border-color:#e1306c}
 .social-btn.em:hover{background:var(--blue);border-color:var(--blue)}
+.social-btn.fb:hover{background:#1877f2;border-color:#1877f2}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .footer-copy{font-size:12px;color:rgba(255,255,255,0.35)}
 
@@ -173,10 +174,26 @@ footer{background:var(--dark);padding:44px 6% 24px}
 @media(max-width:900px){
   .why-grid,.contact-grid{grid-template-columns:1fr;gap:36px}
 }
+/* Language dropdown */
+.lang-dropdown{position:relative}
+.lang-current{background:var(--blue);border:none;color:#fff;padding:7px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Barlow',sans-serif;letter-spacing:0.5px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.lang-current:after{content:'▾';font-size:10px}
+.lang-dropdown-menu{display:none;position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:2px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 8px 24px rgba(27,68,176,0.12);z-index:200;min-width:80px}
+.lang-dropdown.open .lang-dropdown-menu{display:block}
+.lang-dropdown-menu button{display:block;width:100%;background:none;border:none;padding:9px 16px;font-size:13px;font-weight:700;color:var(--text-muted);cursor:pointer;font-family:'Barlow',sans-serif;text-align:left;transition:all .2s}
+.lang-dropdown-menu button:hover{background:var(--bg);color:var(--blue)}
+.lang-dropdown-menu button.active{color:var(--blue);background:rgba(27,68,176,0.06)}
+
 @media(max-width:680px){
-  .nav-links{display:none}
   .hero-btns{flex-direction:column}
   .form-row{flex-direction:column}
+  nav{flex-wrap:wrap;height:auto;padding:10px 5%}
+  .nav-logo{order:1}
+  .nav-links{order:3;width:100%;display:flex!important;gap:0;flex-wrap:wrap;padding:6px 0 4px;border-top:1px solid var(--border);margin-top:6px}
+  .nav-links li{flex:0 0 auto}
+  .nav-links a{font-size:12px;padding:4px 8px}
+  .nav-links .nav-cta{padding:6px 14px;font-size:12px}
+  .lang-current-wrapper{order:2;margin-left:auto}
 }
 </style>
 </head>
@@ -193,11 +210,16 @@ footer{background:var(--dark);padding:44px 6% 24px}
     <li><a href="#referanslar" id="nav3">Markalar</a></li>
     <li><a href="#iletisim" class="nav-cta" id="nav4">İletişim</a></li>
   </ul>
-  <div class="lang-switcher">
-    <button class="lang-btn active" onclick="setLang('tr')">TR</button>
-    <button class="lang-btn" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('de')">DE</button>
-    <button class="lang-btn" onclick="setLang('ru')">RU</button>
+  <div class="lang-current-wrapper">
+    <div class="lang-dropdown" id="langDropdown">
+      <button class="lang-current" id="langCurrent" onclick="toggleLangMenu()">TR</button>
+      <div class="lang-dropdown-menu">
+        <button class="active" onclick="setLang('tr');closeLangMenu()">TR</button>
+        <button onclick="setLang('en');closeLangMenu()">EN</button>
+        <button onclick="setLang('de');closeLangMenu()">DE</button>
+        <button onclick="setLang('ru');closeLangMenu()">RU</button>
+      </div>
+    </div>
   </div>
 </nav>
 
@@ -231,12 +253,13 @@ footer{background:var(--dark);padding:44px 6% 24px}
     <p class="section-desc" id="srvDsc">Satıştan servise, bakımdan yedek parçaya kadar jeneratör dünyasının tüm ihtiyaçlarını tek çatı altında karşılıyoruz.</p>
   </div>
   <div class="services-grid">
-    <div class="service-card"><div class="service-icon">⚡</div><div class="service-title" id="st0">Jeneratör Satışı</div><p class="service-desc" id="sd0">5 kVA'dan 2000 kVA'ya kadar geniş güç aralığında dizel ve benzinli jeneratör satışı. Markalı ürünler, uygun fiyatlar.</p></div>
-    <div class="service-card"><div class="service-icon">🔄</div><div class="service-title" id="st1">Kiralama</div><p class="service-desc" id="sd1">Şantiye, etkinlik ve geçici enerji ihtiyaçları için günlük, haftalık veya aylık kısa ve uzun dönem jeneratör kiralama.</p></div>
-    <div class="service-card"><div class="service-icon">🔧</div><div class="service-title" id="st2">Teknik Servis</div><p class="service-desc" id="sd2">Arıza tespiti ve onarım hizmetleri. 24 saat içinde müdahale garantisi ile sahada veya atölyemizde profesyonel servis.</p></div>
-    <div class="service-card"><div class="service-icon">📋</div><div class="service-title" id="st3">Periyodik Bakım</div><p class="service-desc" id="sd3">Düzenli bakım sözleşmeleri ile jeneratörünüzün ömrünü uzatıyoruz. Yağ, filtre, akü, alternatör ve motor kontrolleri.</p></div>
-    <div class="service-card"><div class="service-icon">🔩</div><div class="service-title" id="st4">Yedek Parça</div><p class="service-desc" id="sd4">Orijinal ve muadil yedek parça temin hizmeti. Geniş stok yapımız ile bekleme süresini minimuma indiriyoruz.</p></div>
-    <div class="service-card"><div class="service-icon">🛡️</div><div class="service-title" id="st5">UPS Sistemleri</div><p class="service-desc" id="sd5">Kesintisiz güç kaynağı satışı ve servisi. Hassas elektronik cihazlarınızı ani gerilim dalgalanmalarından koruyoruz.</p></div>
+    <div class="service-card"><div class="service-icon">⚡</div><div class="service-title" id="st0">Jeneratör</div><p class="service-desc" id="sd0">Satış, kiralama, teknik servis ve periyodik bakım. 5 kVA'dan 2000 kVA'ya kadar tüm güç aralıklarında dizel jeneratör hizmetleri.</p></div>
+    <div class="service-card"><div class="service-icon">⚖️</div><div class="service-title" id="st1">Regülatör</div><p class="service-desc" id="sd1">Voltaj dalgalanmalarına karşı servo motor kontrollü otomatik voltaj regülatörü satış, kurulum ve servis hizmetleri.</p></div>
+    <div class="service-card"><div class="service-icon">🛡️</div><div class="service-title" id="st2">UPS</div><p class="service-desc" id="sd2">Kesintisiz güç kaynağı satışı, kurulumu ve bakımı. Sunucu odaları ve hassas cihazlar için online ve line-interactive UPS çözümleri.</p></div>
+    <div class="service-card"><div class="service-icon">🔋</div><div class="service-title" id="st3">Kompanzasyon Panoları</div><p class="service-desc" id="sd3">Reaktif güç kompanzasyonu ile enerji faturalarını düşürün. Otomatik güç faktörü düzeltme panoları tasarım, üretim ve devreye alma.</p></div>
+    <div class="service-card"><div class="service-icon">🚗</div><div class="service-title" id="st4">Araç Şarj İstasyonu</div><p class="service-desc" id="sd4">Elektrikli araçlar için AC ve DC şarj istasyonu tedarik, kurulum ve teknik destek. Konut, iş yeri ve otopark uygulamaları.</p></div>
+    <div class="service-card"><div class="service-icon">☀️</div><div class="service-title" id="st5">Solar Enerji</div><p class="service-desc" id="sd5">Güneş enerjisi sistemi tasarım ve kurulum. Çatı tipi, arazi tipi ve hibrit sistemler. Enerji verimliliği ve yatırım geri dönüşü analizi.</p></div>
+    <div class="service-card"><div class="service-icon">🔌</div><div class="service-title" id="st6">Elektrik AG ve OG Sistemleri</div><p class="service-desc" id="sd6">Alçak gerilim ve orta gerilim elektrik tesisatı, trafo merkezleri, pano imalatı ve enerji dağıtım sistemleri kurulum hizmetleri.</p></div>
   </div>
 </section>
 
@@ -244,13 +267,16 @@ footer{background:var(--dark);padding:44px 6% 24px}
   <div class="products-header">
     <div>
       <div class="section-label" id="prdLbl">Ürün Kataloğu</div>
-      <h2 class="section-title" id="prdTtl">Jeneratörlerimiz</h2>
+      <h2 class="section-title" id="prdTtl">Ürünlerimiz</h2>
     </div>
     <div class="filter-tabs">
       <button class="filter-btn active" id="fb0" onclick="filterProducts('all',this)">Tümü</button>
-      <button class="filter-btn" id="fb1" onclick="filterProducts('diesel',this)">Dizel</button>
+      <button class="filter-btn" id="fb1" onclick="filterProducts('diesel',this)">Jeneratör</button>
+      <button class="filter-btn" id="fb4" onclick="filterProducts('regulator',this)">Regülatör</button>
       <button class="filter-btn" id="fb2" onclick="filterProducts('ups',this)">UPS</button>
-      <button class="filter-btn" id="fb3" onclick="filterProducts('rental',this)">Kiralık</button>
+      <button class="filter-btn" id="fb5" onclick="filterProducts('kompansator',this)">Kompanzasyon Panoları</button>
+      <button class="filter-btn" id="fb6" onclick="filterProducts('charger',this)">Araç Şarj İstasyonu</button>
+      <button class="filter-btn" id="fb7" onclick="filterProducts('solar',this)">Solar Enerji</button>
     </div>
   </div>
   <div class="products-grid" id="productsGrid"></div>
@@ -297,10 +323,11 @@ footer{background:var(--dark);padding:44px 6% 24px}
       <h2 class="section-title" id="ctTtl">Bize Ulaşın</h2>
       <p class="section-desc" id="ctDsc">Ürünler, fiyat teklifi veya teknik destek için bizi arayabilir ya da mesaj gönderebilirsiniz.</p>
       <div class="contact-items">
-        <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-label" id="cl0">Adres</div><div class="contact-value"><a href="https://maps.google.com/?q=Aşağı+Pazarcı,+1555.+Sk.,+07600+Manavgat/Antalya" target="_blank" style="color:var(--dark);text-decoration:none;">Aşağı Pazarcı, 1555. Sk., 07600 Manavgat / Antalya</a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-label" id="cl0">Adres</div><div class="contact-value"><a href="https://maps.google.com/?q=Örnek+Mahallesi+1555.+Sokak+No+1/1+Manavgat+Antalya" target="_blank" style="color:var(--dark);text-decoration:none;">Örnek Mahallesi 1555. Sokak No 1/1, Manavgat / Antalya</a></div></div></div>
         <div class="contact-item"><div class="contact-icon">📞</div><div><div class="contact-label" id="cl1">Telefon & WhatsApp</div><div class="contact-value"><a href="tel:+905322468797">+90 532 246 87 97</a><br><a href="tel:+905524638619" style="color:var(--dark);text-decoration:none;">+90 552 463 86 19</a></div></div></div>
         <div class="contact-item"><div class="contact-icon">✉️</div><div><div class="contact-label" id="cl2">E-Posta</div><div class="contact-value"><span id="emailVal"></span></div></div></div>
         <div class="contact-item"><div class="contact-icon">📸</div><div><div class="contact-label" id="cl3">Instagram</div><div class="contact-value"><a href="https://www.instagram.com/matekendustriyel" target="_blank">@matekendustriyel</a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">📘</div><div><div class="contact-label" id="cl4">Facebook</div><div class="contact-value"><a href="https://www.facebook.com/share/1Huwcfikw4/" target="_blank">Matek Endüstriyel Elektrik</a></div></div></div>
       </div>
     </div>
     <div class="contact-form-wrap">
@@ -340,6 +367,9 @@ footer{background:var(--dark);padding:44px 6% 24px}
     <div class="footer-social">
       <a href="https://wa.me/905322468797" class="social-btn wa" target="_blank">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="#25d366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      </a>
+      <a href="https://www.facebook.com/share/1Huwcfikw4/" class="social-btn fb" target="_blank">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="#1877f2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       </a>
       <a href="https://www.instagram.com/matekendustriyel" class="social-btn ig" target="_blank">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
@@ -381,38 +411,59 @@ footer{background:var(--dark);padding:44px 6% 24px}
 const products=[
   {id:1,cat:'diesel',icon:'🔋',bt:'',
     name:{tr:'Dizel Jeneratör 30 kVA',en:'Diesel Generator 30 kVA',de:'Diesel-Generator 30 kVA',ru:'Дизельный генератор 30 кВА'},
-    desc:{tr:'Küçük işletmeler ve konutlar için sessiz tip dizel jeneratör. Perkins motor, Stamford alternatör.',en:'Silent type diesel generator for small businesses and homes. Perkins engine, Stamford alternator.',de:'Geräuscharmer Diesel-Generator für Kleinbetriebe und Häuser. Perkins Motor, Stamford Alternator.',ru:'Бесшумный дизельный генератор для малого бизнеса и домов. Двигатель Perkins, альтернатор Stamford.'},
+    desc:{tr:'Küçük işletmeler ve konutlar için sessiz tip dizel jeneratör. Perkins motor, Stamford alternatör.',en:'Silent diesel generator for small businesses and homes. Perkins engine, Stamford alternator.',de:'Geräuscharmer Generator für Kleinbetriebe. Perkins Motor, Stamford Alternator.',ru:'Бесшумный генератор для малого бизнеса. Двигатель Perkins, альтернатор Stamford.'},
     specs:[{k:'Güç/Power/Leistung/Мощность',v:'30 kVA'},{k:'Motor',v:'Perkins'},{k:'Gürültü/Noise/Lärm/Шум',v:'67 dB'},{k:'Tank',v:'60 L'}],
-    ld:{tr:'Perkins motor ve Stamford alternatörün birleşimiyle güvenilir ve uzun ömürlü güç kaynağı. Sesli uyarı, oto start ve elektronik voltaj regülatörü standarttır.',en:'Reliable long-life power source combining Perkins engine and Stamford alternator. Audio alarm, auto start and electronic voltage regulator are standard.',de:'Zuverlässige Stromquelle mit Perkins Motor und Stamford Alternator. Akustischer Alarm, Auto-Start und elektronischer Spannungsregler serienmäßig.',ru:'Надёжный источник питания с двигателем Perkins и альтернатором Stamford. Звуковая сигнализация, автозапуск и электронный регулятор напряжения — стандарт.'}},
+    ld:{tr:'Perkins motor ve Stamford alternatörün birleşimiyle güvenilir ve uzun ömürlü güç kaynağı. Sesli uyarı, oto start ve elektronik voltaj regülatörü standarttır.',en:'Reliable long-life power source combining Perkins engine and Stamford alternator. Audio alarm, auto start and electronic voltage regulator are standard.',de:'Zuverlässige Stromquelle mit Perkins Motor. Akustischer Alarm, Auto-Start serienmäßig.',ru:'Надёжный источник питания Perkins. Звуковая сигнализация и автозапуск — стандарт.'}},
   {id:2,cat:'diesel',icon:'⚡',bt:'',
     name:{tr:'Dizel Jeneratör 100 kVA',en:'Diesel Generator 100 kVA',de:'Diesel-Generator 100 kVA',ru:'Дизельный генератор 100 кВА'},
-    desc:{tr:'Orta ölçekli işletmeler, fabrikalar ve oteller için güçlü dizel jeneratör.',en:'Powerful diesel generator for mid-size businesses, factories and hotels.',de:'Leistungsstarker Diesel-Generator für mittelständische Betriebe, Fabriken und Hotels.',ru:'Мощный дизельный генератор для среднего бизнеса, заводов и отелей.'},
+    desc:{tr:'Orta ölçekli işletmeler, fabrikalar ve oteller için güçlü dizel jeneratör. Cummins motor.',en:'Powerful diesel generator for mid-size businesses, factories and hotels. Cummins engine.',de:'Leistungsstarker Generator für Betriebe und Hotels. Cummins Motor.',ru:'Мощный генератор для бизнеса и отелей. Двигатель Cummins.'},
     specs:[{k:'Güç/Power/Leistung/Мощность',v:'100 kVA'},{k:'Motor',v:'Cummins'},{k:'Yakıt/Fuel/Kraftstoff/Топливо',v:'30 L/h'},{k:'Ağırlık/Weight/Gewicht/Вес',v:'1200 kg'}],
-    ld:{tr:'Cummins motor teknolojisi ile sabit verim. Gelişmiş kontrol paneli ve uzaktan izleme modülü standarttır.',en:'Consistent performance with Cummins engine technology. Advanced control panel and remote monitoring module are standard.',de:'Konstante Leistung mit Cummins Motortechnologie. Erweitertes Bedienfeld und Fernüberwachungsmodul serienmäßig.',ru:'Стабильная производительность с технологией двигателя Cummins. Продвинутая панель управления и модуль удалённого мониторинга — стандарт.'}},
+    ld:{tr:'Cummins motor teknolojisi ile sabit verim. Gelişmiş kontrol paneli ve uzaktan izleme modülü standarttır.',en:'Consistent performance with Cummins engine. Advanced control panel and remote monitoring module are standard.',de:'Konstante Leistung mit Cummins Motor. Erweitertes Bedienfeld serienmäßig.',ru:'Стабильная производительность Cummins. Продвинутая панель управления — стандарт.'}},
   {id:3,cat:'diesel',icon:'🏭',bt:'',
     name:{tr:'Dizel Jeneratör 500 kVA',en:'Diesel Generator 500 kVA',de:'Diesel-Generator 500 kVA',ru:'Дизельный генератор 500 кВА'},
-    desc:{tr:'Büyük sanayi tesisleri ve hastaneler için yüksek güçlü endüstriyel jeneratör.',en:'High-power industrial generator for large industrial facilities and hospitals.',de:'Hochleistungs-Industriegenerator für Großbetriebe und Krankenhäuser.',ru:'Мощный промышленный генератор для крупных производств и больниц.'},
+    desc:{tr:'Büyük sanayi tesisleri ve hastaneler için yüksek güçlü endüstriyel jeneratör. Volvo Penta motor.',en:'High-power industrial generator for large facilities and hospitals. Volvo Penta engine.',de:'Industriegenerator für Großbetriebe. Volvo Penta Motor.',ru:'Промышленный генератор для заводов. Двигатель Volvo Penta.'},
     specs:[{k:'Güç/Power/Leistung/Мощность',v:'500 kVA'},{k:'Motor',v:'Volvo Penta'},{k:'Depo/Tank/Tank/Бак',v:'400 L'},{k:'Ömür/Life/Laufzeit/Ресурс',v:'30.000 h'}],
-    ld:{tr:'Volvo Penta endüstriyel motoru ile 30.000 saate kadar kesintisiz çalışma. ISO 8528 standartlarına uygun.',en:'Uninterrupted operation up to 30,000 hours with Volvo Penta industrial engine. Complies with ISO 8528 standards.',de:'Unterbrechungsfreier Betrieb bis zu 30.000 Stunden mit Volvo Penta Industriemotor. Entspricht ISO 8528 Normen.',ru:'Непрерывная работа до 30 000 часов с промышленным двигателем Volvo Penta. Соответствует стандартам ISO 8528.'}},
+    ld:{tr:'Volvo Penta endüstriyel motoru ile 30.000 saate kadar kesintisiz çalışma. ISO 8528 standartlarına uygun.',en:'Uninterrupted operation up to 30,000 hours with Volvo Penta engine. Complies with ISO 8528.',de:'Bis zu 30.000 Stunden Betrieb. ISO 8528 konform.',ru:'До 30 000 часов работы. Соответствует ISO 8528.'}},
+  {id:6,cat:'regulator',icon:'⚖️',bt:'',
+    name:{tr:'Voltaj Regülatörü',en:'Voltage Regulator',de:'Spannungsregler',ru:'Стабилизатор напряжения'},
+    desc:{tr:'Hassas elektronik cihazlar için voltaj dalgalanmalarına karşı otomatik koruma sistemi.',en:'Automatic voltage protection system against fluctuations for sensitive electronics.',de:'Automatischer Spannungsschutz für empfindliche Elektronik.',ru:'Автоматическая защита от скачков напряжения для электроники.'},
+    specs:[{k:'Güç/Power/Leistung/Мощность',v:'1-500 kVA'},{k:'Hassasiyet/Accuracy/Genauigkeit/Точность',v:'±1%'},{k:'Giriş/Input/Eingang/Вход',v:'±40%'},{k:'Tip/Type/Typ/Тип',v:'Servo'}],
+    ld:{tr:'Servo motor kontrollü otomatik voltaj regülatörü. Şebeke voltajındaki dalgalanmaları düzelterek cihazlarınıza sabit ve temiz voltaj sağlar. Endüstriyel makineler, CNC tezgahlar ve tıbbi cihazlar için idealdir.',en:'Servo motor controlled automatic voltage regulator. Corrects mains voltage fluctuations, providing stable clean voltage. Ideal for industrial machines, CNC benches and medical devices.',de:'Servomotorgesteuerter Spannungsregler. Korrigiert Netzspannungsschwankungen für stabile Spannung. Ideal für Industriemaschinen und Medizingeräte.',ru:'Автоматический регулятор с сервоприводом. Корректирует колебания сети. Идеален для промышленного оборудования и медприборов.'}},
   {id:4,cat:'ups',icon:'🛡️',bt:'',
     name:{tr:'Online UPS 10 kVA',en:'Online UPS 10 kVA',de:'Online-USV 10 kVA',ru:'Онлайн ИБП 10 кВА'},
-    desc:{tr:'Sunucu odaları ve hassas medikal cihazlar için çift konversiyonlu online UPS.',en:'Double conversion online UPS for server rooms and sensitive medical devices.',de:'Doppelkonversions-Online-USV für Serverräume und empfindliche Medizingeräte.',ru:'Двойной конверсии онлайн ИБП для серверных комнат и чувствительного медоборудования.'},
+    desc:{tr:'Sunucu odaları ve hassas medikal cihazlar için çift konversiyonlu online UPS.',en:'Double conversion online UPS for server rooms and sensitive medical devices.',de:'Doppelkonversions-USV für Serverräume und Medizingeräte.',ru:'Двойной конверсии ИБП для серверных и медоборудования.'},
     specs:[{k:'Güç/Power/Leistung/Мощность',v:'10 kVA'},{k:'Tür/Type/Typ/Тип',v:'Online'},{k:'Batarya/Battery/Batterie/Батарея',v:'30 min'},{k:'Verim/Eff./Eff./КПД',v:'96%'}],
-    ld:{tr:'Çift konversiyon teknolojisi ile saf sinüs dalga çıkışı. Hotswap batarya ve SNMP kart yuvası standarttır.',en:'Pure sine wave output with double conversion technology. Hotswap battery and SNMP card slot are standard.',de:'Reiner Sinuswellenausgang mit Doppelkonversionstechnologie. Hotswap-Batterie und SNMP-Kartensteckplatz serienmäßig.',ru:'Чистый синусоидальный выход с технологией двойного преобразования. Горячая замена батареи и слот SNMP-карты — стандарт.'}},
+    ld:{tr:'Çift konversiyon teknolojisi ile saf sinüs dalga çıkışı. Hotswap batarya ve SNMP kart yuvası standarttır.',en:'Pure sine wave output with double conversion. Hotswap battery and SNMP card slot are standard.',de:'Reiner Sinuswellenausgang. Hotswap-Batterie und SNMP serienmäßig.',ru:'Чистый синус. Горячая замена батареи и SNMP — стандарт.'}},
+  {id:7,cat:'kompansator',icon:'🔌',bt:'',
+    name:{tr:'Güç Faktörü Kompanzasyon Panosu',en:'Power Factor Compensation Panel',de:'Blindleistungskompensationsanlage',ru:'Компенсатор реактивной мощности'},
+    desc:{tr:'Endüstriyel tesisler için reaktif güç kompanzasyonu. Enerji tasarrufu ve ceza önleme.',en:'Reactive power compensation for industrial facilities. Energy saving and penalty prevention.',de:'Blindleistungskompensation für Industrieanlagen. Energieeinsparung.',ru:'Компенсация реактивной мощности. Экономия энергии.'},
+    specs:[{k:'Güç/Power/Leistung/Мощность',v:'10-2000 kVAr'},{k:'cos φ',v:'0.95+'},{k:'Tasarruf/Saving/Einsparung/Экономия',v:'%15-30'},{k:'Tip/Type/Typ/Тип',v:'Otomatik'}],
+    ld:{tr:'Otomatik güç faktörü kompanzasyon panosu, reaktif güç tüketimini minimize ederek elektrik faturalarını düşürür. TEDAŞ ceza ödemelerini önler, trafo ve kablo kapasitesini artırır. Fabrikalar, oteller ve büyük binalar için zorunlu sistem.',en:'Automatic power factor compensation panel minimizes reactive power, reducing electricity bills. Prevents utility penalties and increases transformer capacity. Essential for factories, hotels and large buildings.',de:'Automatische Blindleistungskompensation senkt Stromrechnungen und verhindert Strafgebühren. Unerlässlich für Fabriken und Hotels.',ru:'Автоматическая компенсация реактивной мощности снижает счета и предотвращает штрафы. Незаменима для заводов и отелей.'}},
+  {id:8,cat:'charger',icon:'🚗',bt:'',
+    name:{tr:'Araç Şarj İstasyonu',en:'EV Charging Station',de:'E-Ladestation',ru:'Зарядная станция для ЭМ'},
+    desc:{tr:'Elektrikli araçlar için AC ve DC şarj istasyonu. Konut, iş yeri ve otopark uygulamaları.',en:'AC and DC charging stations for electric vehicles. Residential, commercial and parking applications.',de:'AC- und DC-Ladestation für Elektrofahrzeuge. Für Wohngebäude, Betriebe und Parkhäuser.',ru:'AC и DC зарядные станции для электромобилей. Для жилых домов, бизнеса и парковок.'},
+    specs:[{k:'Güç/Power/Leistung/Мощность',v:'7-150 kW'},{k:'Tip/Type/Typ/Тип',v:'AC/DC'},{k:'Konnektör/Connector/Stecker/Разъём',v:'Type2/CCS'},{k:'Ağ/Network/Netz/Сеть',v:'Akıllı'}],
+    ld:{tr:'Mode 3 AC ve CCS/CHAdeMO DC hızlı şarj istasyonları tedarik ve kurulum. Akıllı şarj yönetim sistemi ile uzaktan izleme ve kontrol. Konut, alışveriş merkezi, otel ve otopark projeleri.',en:'Mode 3 AC and CCS/CHAdeMO DC fast charging stations supply and installation. Smart charging management with remote monitoring. Residential, shopping center, hotel and parking projects.',de:'Mode 3 AC und CCS/CHAdeMO DC Schnellladestation Lieferung und Installation. Intelligentes Lademanagement mit Fernüberwachung.',ru:'Поставка и монтаж AC и DC быстрых зарядных станций. Умное управление зарядкой с удалённым мониторингом.'}},
+  {id:9,cat:'solar',icon:'☀️',bt:'',
+    name:{tr:'Solar Enerji Sistemi',en:'Solar Energy System',de:'Solarsystem',ru:'Солнечная энергосистема'},
+    desc:{tr:'Çatı tipi ve arazi tipi güneş enerjisi sistemleri tasarım, tedarik ve kurulum.',en:'Rooftop and ground-mounted solar energy system design, supply and installation.',de:'Aufdach- und Freiland-Solaranlagen Planung, Lieferung und Installation.',ru:'Проектирование, поставка и монтаж кровельных и наземных солнечных систем.'},
+    specs:[{k:'Güç/Power/Leistung/Мощность',v:'5-1000 kWp'},{k:'Tip/Type/Typ/Тип',v:'On/Off-Grid'},{k:'Verim/Eff./Eff./КПД',v:'%98+'},{k:'Garanti/Warranty/Garantie/Гарантия',v:'25 yıl'}],
+    ld:{tr:'Monokristal güneş panelleri ve yüksek verimli inverterlerle anahtar teslim solar enerji sistemi kurulumu. Enerji tasarrufu analizi, teşvik danışmanlığı ve üretim takibi dahil. 25 yıl panel garantisi.',en:'Turnkey solar energy system with monocrystalline panels and high-efficiency inverters. Includes energy saving analysis, incentive consulting and production monitoring. 25-year panel warranty.',de:'Schlüsselfertige Solaranlage mit monokristallinen Modulen. Inkl. Energieanalyse und Produktionsüberwachung. 25 Jahre Garantie.',ru:'Система под ключ с монокристаллическими панелями. Включает анализ экономии и мониторинг. Гарантия 25 лет.'}},
   {id:5,cat:'rental',icon:'🔄',bt:'rental',
     name:{tr:'Kiralık Jeneratör 250 kVA',en:'Rental Generator 250 kVA',de:'Miet-Generator 250 kVA',ru:'Аренда генератора 250 кВА'},
-    desc:{tr:'Şantiye, festival ve büyük organizasyonlar için günlük, haftalık veya aylık kiralama.',en:'Daily, weekly or monthly rental for construction sites, festivals and large events.',de:'Tägliche, wöchentliche oder monatliche Vermietung für Baustellen, Festivals und Großveranstaltungen.',ru:'Суточная, недельная или месячная аренда для строек, фестивалей и крупных мероприятий.'},
+    desc:{tr:'Şantiye, festival ve büyük organizasyonlar için günlük, haftalık veya aylık kiralama.',en:'Daily, weekly or monthly rental for construction sites, festivals and large events.',de:'Tägliche, wöchentliche oder monatliche Vermietung für Baustellen und Events.',ru:'Суточная, недельная или месячная аренда для строек и мероприятий.'},
     specs:[{k:'Güç/Power/Leistung/Мощность',v:'250 kVA'},{k:'Süre/Duration/Dauer/Срок',v:'Günlük+'},{k:'Teslimat/Delivery/Lieferung/Доставка',v:'Dahil'},{k:'Yakıt/Fuel/Kraft./Топливо',v:'Dahil*'}],
-    ld:{tr:'Tüm yakıt ve teknik destek dahil kiralama paketleri mevcuttur. Antalya bölgesinde ücretsiz teslimat.',en:'Rental packages including all fuel and technical support are available. Free delivery in the Antalya region.',de:'Mietpakete inklusive Kraftstoff und technischem Support verfügbar. Kostenlose Lieferung in der Antalya-Region.',ru:'Пакеты аренды включают топливо и техническую поддержку. Бесплатная доставка в регионе Анталья.'}}
-];
+    ld:{tr:'Tüm yakıt ve teknik destek dahil kiralama paketleri mevcuttur. Antalya bölgesinde ücretsiz teslimat.',en:'Rental packages including all fuel and technical support. Free delivery in the Antalya region.',de:'Mietpakete inklusive Kraftstoff und technischem Support. Kostenlose Lieferung.',ru:'Пакеты аренды с топливом и поддержкой. Бесплатная доставка в регионе Анталья.'}}
+]
 
-const catLabel={diesel:'Dizel Jeneratör',ups:'UPS Sistemi',rental:'Kiralık Jeneratör'};
+
+const catLabel={diesel:'Dizel Jeneratör',ups:'UPS Sistemi',regulator:'Regülatör',kompansator:'Kompanzasyon Panosu',charger:'Araç Şarj İstasyonu',solar:'Solar Enerji Sistemi',rental:'Kiralık Jeneratör'};
 
 const T={
-  tr:{nav:['Hizmetler','Ürünler','Neden Biz?','Markalar','İletişim'],badge:'Manavgat, Antalya &bull; 7/24 Servis',h1:'Güç Kesintisi<br><span class="red">Artık</span> Sorun<br>Değil.',desc:'Jeneratör satış, kiralama, teknik servis, bakım ve yedek parça hizmetleriyle işletmenizin kesintisiz çalışmasını garantiliyoruz.',b1:'Ürünleri İncele',b2:'Hemen Ara',sl:['Yıl Deneyim','Mutlu Müşteri','Teknik Destek'],slbl:'Hizmetlerimiz',sttl:'Her İhtiyaca Özel Çözümler',sdsc:'Satıştan servise, bakımdan yedek parçaya kadar tüm ihtiyaçlarınızı karşılıyoruz.',st:['Jeneratör Satışı','Kiralama','Teknik Servis','Periyodik Bakım','Yedek Parça','UPS Sistemleri'],sd:["5 kVA'dan 2000 kVA'ya kadar dizel ve benzinli jeneratör satışı.",'Şantiye ve etkinlikler için kısa ve uzun dönem kiralama.','24 saat müdahale garantisi ile profesyonel servis.','Düzenli bakım sözleşmeleri ile jeneratör ömrünü uzatıyoruz.','Orijinal ve muadil yedek parça. Geniş stok.','Kesintisiz güç kaynağı satış ve servisi.'],plbl:'Ürün Kataloğu',pttl:'Jeneratörlerimiz',fa:'Tümü',fd:'Dizel',fu:'UPS',fr:'Kiralık',wlbl:'Neden Matek?',wttl:'Bölgenin Güvenilir Enerji Ortağı',wdsc:"Antalya Manavgat'ta yılların deneyimiyle kesintisiz enerji çözümleri sunuyoruz.",wt:['7/24 Acil Müdahale','Sertifikalı Teknisyenler','Garantili İşçilik','Rekabetçi Fiyatlar'],wd:['Gecenin her saatinde arıza bildirimi alır sahada oluruz.','Tüm markalar için uzman ekibimizle güvende olun.','Tüm onarımlar için işçilik garantisi veriyoruz.','Kaliteli hizmeti uygun fiyatla sunuyoruz.'],wsb:['Mutlu Müşteri','Yıl Sektör Deneyimi','Servis İşlemi','Teknik Destek'],blbl:'Çalıştığımız Markalar',bttl:'Güvenilir Markalar',bdsc:'Dünyaca tanınmış jeneratör ve UPS markalarının yetkili satış ve servis ortaklarıyız.',clbl:'İletişim',cttl:'Bize Ulaşın',cdsc:'Fiyat teklifi veya teknik destek için bizi arayın.',cl:['Adres','Telefon & WhatsApp','E-Posta','Instagram'],ftl:'Teklif İsteyin',fwn:"Formunuz doğrudan WhatsApp'a iletilecektir",fls:['Ad Soyad','Telefon','Hizmet Türü','Mesajınız'],fps:['Adınız Soyadınız','05XX XXX XX XX','Seçiniz...','Talebinizi açıklayın...'],fbt:'WhatsApp ile Teklif Al',so:['Jeneratör Satışı','Jeneratör Kiralama','Teknik Servis / Arıza','Periyodik Bakım','Yedek Parça','UPS Sistemi']},
-  en:{nav:['Services','Products','Why Us?','Brands','Contact'],badge:'Manavgat, Antalya &bull; 24/7 Service',h1:'Power Outage<br><span class="red">No Longer</span><br>a Problem.',desc:'We guarantee uninterrupted operation with generator sales, rental, technical service and maintenance.',b1:'View Products',b2:'Call Now',sl:['Years Exp.','Happy Clients','Support'],slbl:'Our Services',sttl:'Solutions for Every Need',sdsc:'We meet all generator needs under one roof.',st:['Generator Sales','Rental','Technical Service','Periodic Maintenance','Spare Parts','UPS Systems'],sd:['Diesel generators from 5-2000 kVA. Brand products, competitive prices.','Daily, weekly or monthly rental for construction sites and events.','24-hour response guarantee. Professional on-site service.','Extend generator life with regular maintenance contracts.','Original and equivalent spare parts. Wide stock.','UPS sales and service. Voltage protection.'],plbl:'Products',pttl:'Our Generators',fa:'All',fd:'Diesel',fu:'UPS',fr:'Rental',wlbl:'Why Matek?',wttl:'Trusted Energy Partner',wdsc:'We provide uninterrupted energy solutions in Antalya Manavgat.',wt:['24/7 Emergency Response','Certified Technicians','Guaranteed Workmanship','Competitive Prices'],wd:['We respond to fault reports at any hour.','Experienced team for all generator brands.','Workmanship guarantee on all repairs.','Quality service at reasonable prices.'],wsb:['Happy Clients','Years of Experience','Service Ops.','Support'],blbl:'Our Brands',bttl:'Trusted Brands',bdsc:'Authorized sales and service partners of world-renowned brands.',clbl:'Contact',cttl:'Get In Touch',cdsc:'Call or message us for products, quotes or technical support.',cl:['Address','Phone & WhatsApp','E-Mail','Instagram'],ftl:'Request a Quote',fwn:'Your form will be sent to WhatsApp',fls:['Full Name','Phone','Service Type','Message'],fps:['Your Name','+90 5XX XXX','Select...','Describe your request...'],fbt:'Get Quote via WhatsApp',so:['Generator Sales','Rental','Technical Service','Maintenance','Spare Parts','UPS System']},
-  de:{nav:['Leistungen','Produkte','Warum wir?','Marken','Kontakt'],badge:'Manavgat, Antalya &bull; 24/7 Service',h1:'Stromausfall<br><span class="red">Kein</span><br>Problem Mehr.',desc:'Wir garantieren den ununterbrochenen Betrieb mit Generatorverkauf, Vermietung und technischem Service.',b1:'Produkte ansehen',b2:'Jetzt anrufen',sl:['Jahre Erfahrung','Kunden','Support'],slbl:'Unsere Leistungen',sttl:'Maßgeschneiderte Lösungen',sdsc:'Alle Generatorbedürfnisse unter einem Dach.',st:['Generatorverkauf','Vermietung','Technischer Service','Periodische Wartung','Ersatzteile','USV-Systeme'],sd:['Diesel-Generatoren von 5-2000 kVA. Markenprodukte, günstige Preise.','Tägliche/wöchentliche Vermietung für Baustellen und Events.','24-Stunden-Reaktionsgarantie. Professioneller Service.','Generatorlebensdauer durch Wartungsverträge verlängern.','Original- und Äquivalenz-Ersatzteile.','USV-Verkauf und Service.'],plbl:'Produktkatalog',pttl:'Unsere Generatoren',fa:'Alle',fd:'Diesel',fu:'USV',fr:'Mietgeräte',wlbl:'Warum Matek?',wttl:'Vertrauenswürdiger Energiepartner',wdsc:'Ununterbrochene Energielösungen in Antalya Manavgat.',wt:['24/7 Notfalldienst','Zertifizierte Techniker','Garantierte Arbeit','Competitive Preise'],wd:['Rund um die Uhr erreichbar.','Erfahrenes Team für alle Generatormarken.','Arbeitsgarantie auf alle Reparaturen.','Qualitätsservice zu fairen Preisen.'],wsb:['Kunden','Jahre Erfahrung','Serviceops.','Support'],blbl:'Unsere Marken',bttl:'Vertrauenswürdige Marken',bdsc:'Autorisierter Partner weltbekannter Marken.',clbl:'Kontakt',cttl:'Kontaktieren Sie uns',cdsc:'Rufen Sie uns an oder schreiben Sie.',cl:['Adresse','Telefon & WhatsApp','E-Mail','Instagram'],ftl:'Angebot anfordern',fwn:'Ihr Formular wird an WhatsApp gesendet',fls:['Name','Telefon','Service','Nachricht'],fps:['Ihr Name','+90 5XX XXX','Auswählen...','Ihr Bedarf...'],fbt:'Angebot via WhatsApp',so:['Generatorverkauf','Vermietung','Technischer Service','Wartung','Ersatzteile','USV']},
-  ru:{nav:['Услуги','Продукты','Почему мы?','Бренды','Контакт'],badge:'Манавгат, Анталья &bull; Сервис 24/7',h1:'Отключение<br><span class="red">Электричества</span><br>Не Проблема.',desc:'Мы гарантируем бесперебойную работу: продажа, аренда, сервис и запчасти.',b1:'Смотреть продукты',b2:'Позвонить',sl:['Лет опыта','Клиентов','Поддержка'],slbl:'Наши услуги',sttl:'Решения для каждой потребности',sdsc:'Все потребности в генераторах под одной крышей.',st:['Продажа генераторов','Аренда','Технический сервис','Периодическое ТО','Запасные части','Системы ИБП'],sd:['Дизельные генераторы 5-2000 кВА. Брендовые товары.','Суточная/недельная аренда для строек и мероприятий.','Гарантия реагирования 24 часа. Профсервис.','Продлеваем срок службы генератора.','Оригинальные и эквивалентные запчасти.','Продажа и сервис ИБП.'],plbl:'Каталог',pttl:'Наши генераторы',fa:'Все',fd:'Дизель',fu:'ИБП',fr:'Аренда',wlbl:'Почему Matek?',wttl:'Надёжный энергопартнёр',wdsc:'Бесперебойные решения в Манавгате.',wt:['Экстренный выезд 24/7','Сертифицированные техники','Гарантия на работы','Конкурентные цены'],wd:['Принимаем заявки круглосуточно.','Опытная команда для всех брендов.','Гарантия на все ремонтные работы.','Качество по разумной цене.'],wsb:['Клиентов','Лет опыта','Сервисных работ','Поддержка'],blbl:'Наши бренды',bttl:'Надёжные бренды',bdsc:'Авторизованные партнёры всемирно известных брендов.',clbl:'Контакт',cttl:'Свяжитесь с нами',cdsc:'Позвоните или напишите нам.',cl:['Адрес','Телефон & WhatsApp','Эл. почта','Instagram'],ftl:'Запросить предложение',fwn:'Форма будет отправлена в WhatsApp',fls:['Имя','Телефон','Тип услуги','Сообщение'],fps:['Ваше имя','+90 5XX XXX','Выберите...','Ваш запрос...'],fbt:'Предложение в WhatsApp',so:['Продажа','Аренда','Техсервис','ТО','Запчасти','ИБП']}
+  tr:{nav:['Hizmetler','Ürünler','Neden Biz?','Markalar','İletişim'],badge:'Manavgat, Antalya &bull; 7/24 Servis',h1:'Güç Kesintisi<br><span class="red">Artık</span> Sorun<br>Değil.',desc:'Jeneratör satış, kiralama, teknik servis, bakım ve yedek parça hizmetleriyle işletmenizin kesintisiz çalışmasını garantiliyoruz.',b1:'Ürünleri İncele',b2:'Hemen Ara',sl:['Yıl Deneyim','Mutlu Müşteri','Teknik Destek'],slbl:'Hizmetlerimiz',sttl:'Her İhtiyaca Özel Çözümler',sdsc:'Satıştan servise, bakımdan yedek parçaya kadar tüm ihtiyaçlarınızı karşılıyoruz.',st:['Jeneratör','Regülatör','UPS','Kompanzasyon Panoları','Araç Şarj İstasyonu','Solar Enerji','Elektrik AG ve OG Sistemleri'],sd:['Satış, kiralama ve servis. 5-2000 kVA dizel jeneratör.','Voltaj regülatörü satış, kurulum ve servis.','Kesintisiz güç kaynağı satış, kurulum ve bakım.','Reaktif güç kompanzasyon panosu tasarım ve üretim.','AC/DC araç şarj istasyonu tedarik ve kurulum.','Güneş enerjisi sistemi tasarım ve anahtar teslim kurulum.','AG/OG elektrik tesisatı, trafo merkezi ve pano imalatı.'],plbl:'Ürün Kataloğu',pttl:'Ürünlerimiz',fa:'Tümü',fd:'Jeneratör',fu:'UPS',freg:'Regülatör',fkomp:'Kompanzasyon Panoları',fcharger:'Araç Şarj İstasyonu',fsolar:'Solar Enerji',fr:'Kiralık',wlbl:'Neden Matek?',wttl:'Bölgenin Güvenilir Enerji Ortağı',wdsc:"Antalya Manavgat'ta yılların deneyimiyle kesintisiz enerji çözümleri sunuyoruz.",wt:['7/24 Acil Müdahale','Sertifikalı Teknisyenler','Garantili İşçilik','Rekabetçi Fiyatlar'],wd:['Gecenin her saatinde arıza bildirimi alır sahada oluruz.','Tüm markalar için uzman ekibimizle güvende olun.','Tüm onarımlar için işçilik garantisi veriyoruz.','Kaliteli hizmeti uygun fiyatla sunuyoruz.'],wsb:['Mutlu Müşteri','Yıl Sektör Deneyimi','Servis İşlemi','Teknik Destek'],blbl:'Çalıştığımız Markalar',bttl:'Güvenilir Markalar',bdsc:'Dünyaca tanınmış jeneratör ve UPS markalarının yetkili satış ve servis ortaklarıyız.',clbl:'İletişim',cttl:'Bize Ulaşın',cdsc:'Fiyat teklifi veya teknik destek için bizi arayın.',cl:['Adres','Telefon & WhatsApp','E-Posta','Instagram'],ftl:'Teklif İsteyin',fwn:"Formunuz doğrudan WhatsApp'a iletilecektir",fls:['Ad Soyad','Telefon','Hizmet Türü','Mesajınız'],fps:['Adınız Soyadınız','05XX XXX XX XX','Seçiniz...','Talebinizi açıklayın...'],fbt:'WhatsApp ile Teklif Al',so:['Jeneratör Satışı','Jeneratör Kiralama','Teknik Servis / Arıza','Periyodik Bakım','Yedek Parça','UPS Sistemi']},
+  en:{nav:['Services','Products','Why Us?','Brands','Contact'],badge:'Manavgat, Antalya &bull; 24/7 Service',h1:'Power Outage<br><span class="red">No Longer</span><br>a Problem.',desc:'We guarantee uninterrupted operation with generator sales, rental, technical service and maintenance.',b1:'View Products',b2:'Call Now',sl:['Years Exp.','Happy Clients','Support'],slbl:'Our Services',sttl:'Solutions for Every Need',sdsc:'We meet all generator needs under one roof.',st:['Generator','Regulator','UPS','Compensation Panels','EV Charging Station','Solar Energy','LV & MV Electrical Systems'],sd:['Sales, rental and service. 5-2000 kVA diesel generators.','Voltage regulator sales, installation and service.','UPS sales, installation and maintenance.','Reactive power compensation panel design and production.','AC/DC EV charging station supply and installation.','Solar energy system design and turnkey installation.','LV/MV electrical wiring, transformer centers and panel production.'],plbl:'Products',pttl:'Our Products',fa:'All',fd:'Generator',fu:'UPS',freg:'Regulator',fkomp:'Compensation Panels',fcharger:'EV Charging Station',fsolar:'Solar Energy',fr:'Rental',wlbl:'Why Matek?',wttl:'Trusted Energy Partner',wdsc:'We provide uninterrupted energy solutions in Antalya Manavgat.',wt:['24/7 Emergency Response','Certified Technicians','Guaranteed Workmanship','Competitive Prices'],wd:['We respond to fault reports at any hour.','Experienced team for all generator brands.','Workmanship guarantee on all repairs.','Quality service at reasonable prices.'],wsb:['Happy Clients','Years of Experience','Service Ops.','Support'],blbl:'Our Brands',bttl:'Trusted Brands',bdsc:'Authorized sales and service partners of world-renowned brands.',clbl:'Contact',cttl:'Get In Touch',cdsc:'Call or message us for products, quotes or technical support.',cl:['Address','Phone & WhatsApp','E-Mail','Instagram'],ftl:'Request a Quote',fwn:'Your form will be sent to WhatsApp',fls:['Full Name','Phone','Service Type','Message'],fps:['Your Name','+90 5XX XXX','Select...','Describe your request...'],fbt:'Get Quote via WhatsApp',so:['Generator Sales','Rental','Technical Service','Maintenance','Spare Parts','UPS System']},
+  de:{nav:['Leistungen','Produkte','Warum wir?','Marken','Kontakt'],badge:'Manavgat, Antalya &bull; 24/7 Service',h1:'Stromausfall<br><span class="red">Kein</span><br>Problem Mehr.',desc:'Wir garantieren den ununterbrochenen Betrieb mit Generatorverkauf, Vermietung und technischem Service.',b1:'Produkte ansehen',b2:'Jetzt anrufen',sl:['Jahre Erfahrung','Kunden','Support'],slbl:'Unsere Leistungen',sttl:'Maßgeschneiderte Lösungen',sdsc:'Alle Generatorbedürfnisse unter einem Dach.',st:['Generatorverkauf','Vermietung','Technischer Service','Periodische Wartung','Ersatzteile','USV-Systeme'],sd:['Diesel-Generatoren von 5-2000 kVA. Markenprodukte, günstige Preise.','Tägliche/wöchentliche Vermietung für Baustellen und Events.','24-Stunden-Reaktionsgarantie. Professioneller Service.','Generatorlebensdauer durch Wartungsverträge verlängern.','Original- und Äquivalenz-Ersatzteile.','USV-Verkauf und Service.'],plbl:'Produktkatalog',pttl:'Unsere Produkte',fa:'Alle',fd:'Generator',fu:'USV',freg:'Regler',fkomp:'Kompensationsanlage',fcharger:'E-Ladestation',fsolar:'Solarenergie',fr:'Mietgeräte',wlbl:'Warum Matek?',wttl:'Vertrauenswürdiger Energiepartner',wdsc:'Ununterbrochene Energielösungen in Antalya Manavgat.',wt:['24/7 Notfalldienst','Zertifizierte Techniker','Garantierte Arbeit','Competitive Preise'],wd:['Rund um die Uhr erreichbar.','Erfahrenes Team für alle Generatormarken.','Arbeitsgarantie auf alle Reparaturen.','Qualitätsservice zu fairen Preisen.'],wsb:['Kunden','Jahre Erfahrung','Serviceops.','Support'],blbl:'Unsere Marken',bttl:'Vertrauenswürdige Marken',bdsc:'Autorisierter Partner weltbekannter Marken.',clbl:'Kontakt',cttl:'Kontaktieren Sie uns',cdsc:'Rufen Sie uns an oder schreiben Sie.',cl:['Adresse','Telefon & WhatsApp','E-Mail','Instagram'],ftl:'Angebot anfordern',fwn:'Ihr Formular wird an WhatsApp gesendet',fls:['Name','Telefon','Service','Nachricht'],fps:['Ihr Name','+90 5XX XXX','Auswählen...','Ihr Bedarf...'],fbt:'Angebot via WhatsApp',so:['Generatorverkauf','Vermietung','Technischer Service','Wartung','Ersatzteile','USV']},
+  ru:{nav:['Услуги','Продукты','Почему мы?','Бренды','Контакт'],badge:'Манавгат, Анталья &bull; Сервис 24/7',h1:'Отключение<br><span class="red">Электричества</span><br>Не Проблема.',desc:'Мы гарантируем бесперебойную работу: продажа, аренда, сервис и запчасти.',b1:'Смотреть продукты',b2:'Позвонить',sl:['Лет опыта','Клиентов','Поддержка'],slbl:'Наши услуги',sttl:'Решения для каждой потребности',sdsc:'Все потребности в генераторах под одной крышей.',st:['Генераторы','Регуляторы','ИБП','Компенсаторы мощности','Зарядные станции','Солнечная энергия','Эл. системы НН и СН'],sd:['Продажа, аренда и сервис. Дизельные генераторы 5-2000 кВА.','Продажа, монтаж и сервис стабилизаторов.','Продажа, монтаж и обслуживание ИБП.','Проектирование и производство компенсаторов реактивной мощности.','Поставка и монтаж AC/DC зарядных станций.','Проектирование и монтаж солнечных систем под ключ.','Электромонтаж НН/СН, трансформаторные подстанции и щиты.'],plbl:'Каталог',pttl:'Наша продукция',fa:'Все',fd:'Генератор',fu:'ИБП',freg:'Регулятор',fkomp:'Панели компенсации',fcharger:'Зарядная станция',fsolar:'Солнечная энергия',fr:'Аренда',wlbl:'Почему Matek?',wttl:'Надёжный энергопартнёр',wdsc:'Бесперебойные решения в Манавгате.',wt:['Экстренный выезд 24/7','Сертифицированные техники','Гарантия на работы','Конкурентные цены'],wd:['Принимаем заявки круглосуточно.','Опытная команда для всех брендов.','Гарантия на все ремонтные работы.','Качество по разумной цене.'],wsb:['Клиентов','Лет опыта','Сервисных работ','Поддержка'],blbl:'Наши бренды',bttl:'Надёжные бренды',bdsc:'Авторизованные партнёры всемирно известных брендов.',clbl:'Контакт',cttl:'Свяжитесь с нами',cdsc:'Позвоните или напишите нам.',cl:['Адрес','Телефон & WhatsApp','Эл. почта','Instagram'],ftl:'Запросить предложение',fwn:'Форма будет отправлена в WhatsApp',fls:['Имя','Телефон','Тип услуги','Сообщение'],fps:['Ваше имя','+90 5XX XXX','Выберите...','Ваш запрос...'],fbt:'Предложение в WhatsApp',so:['Продажа','Аренда','Техсервис','ТО','Запчасти','ИБП']}
 };
 
 
@@ -424,10 +475,10 @@ function renderProducts(filter){
   const badgeLabel={tr:{sale:'SATIŞTA',rental:'KİRALIK'},en:{sale:'FOR SALE',rental:'RENTAL'},de:{sale:'VERKAUF',rental:'MIETE'},ru:{sale:'ПРОДАЖА',rental:'АРЕНДА'}};
   const bl=badgeLabel[lang]||badgeLabel.tr;
   const catLabelLang={
-    tr:{diesel:'Dizel Jeneratör',ups:'UPS Sistemi',rental:'Kiralık Jeneratör'},
-    en:{diesel:'Diesel Generator',ups:'UPS System',rental:'Rental Generator'},
-    de:{diesel:'Diesel-Generator',ups:'USV-System',rental:'Miet-Generator'},
-    ru:{diesel:'Дизельный генератор',ups:'Система ИБП',rental:'Аренда генератора'}
+    tr:{diesel:'Dizel Jeneratör',ups:'UPS Sistemi',regulator:'Regülatör',kompansator:'Kompanzasyon Panosu',charger:'Araç Şarj İstasyonu',solar:'Solar Enerji Sistemi',rental:'Kiralık Jeneratör'},
+    en:{diesel:'Diesel Generator',ups:'UPS System',regulator:'Voltage Regulator',kompansator:'Compensation Panel',charger:'EV Charging Station',solar:'Solar Energy System',rental:'Rental Generator'},
+    de:{diesel:'Diesel-Generator',ups:'USV-System',regulator:'Spannungsregler',kompansator:'Kompensationsanlage',charger:'E-Ladestation',solar:'Solarsystem',rental:'Miet-Generator'},
+    ru:{diesel:'Дизельный генератор',ups:'Система ИБП',regulator:'Регулятор напряжения',kompansator:'Компенсатор мощности',charger:'Зарядная станция',solar:'Солнечная энергосистема',rental:'Аренда генератора'}
   };
   const cl=catLabelLang[lang]||catLabelLang.tr;
   const detailBtn={tr:'Detaylar & Teklif Al',en:'Details & Quote',de:'Details & Angebot',ru:'Подробнее & Предложение'};
@@ -487,14 +538,33 @@ function sendWA(){
 
 renderProducts('all');
 
+function toggleLangMenu(){
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+function closeLangMenu(){
+  document.getElementById('langDropdown').classList.remove('open');
+}
+document.addEventListener('click',function(e){
+  const dd=document.getElementById('langDropdown');
+  if(dd && !dd.contains(e.target)) dd.classList.remove('open');
+});
+
 // ── DİL DEĞİŞTİRME ──
 function setLang(lang){
   const t=T[lang];
   if(!t) return;
   window.currentLang=lang;
+  // Update dropdown button label
+  const lc=document.getElementById('langCurrent');
+  if(lc) lc.childNodes[0].textContent=lang.toUpperCase();
+  document.querySelectorAll('.lang-dropdown-menu button').forEach(b=>{
+    b.classList.toggle('active', b.textContent===lang.toUpperCase());
+  });
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.lang-btn').forEach(b=>{ if(b.textContent===lang.toUpperCase()) b.classList.add('active'); });
-  for(let i=0;i<5;i++){ const el=document.getElementById('nav'+i); if(el) el.textContent=t.nav[i]; }
+  for(let i=0;i<5;i++){
+    const el=document.getElementById('nav'+i); if(el) el.textContent=t.nav[i];
+  }
   document.getElementById('heroBadge').innerHTML='<span></span>'+t.badge;
   document.getElementById('heroTitle').innerHTML=t.h1;
   document.getElementById('heroDesc').textContent=t.desc;
@@ -506,7 +576,7 @@ function setLang(lang){
   document.getElementById('srvLbl').textContent=t.slbl;
   document.getElementById('srvTtl').textContent=t.sttl;
   document.getElementById('srvDsc').textContent=t.sdsc;
-  for(let i=0;i<6;i++){
+  for(let i=0;i<7;i++){
     const te=document.getElementById('st'+i); if(te) te.textContent=t.st[i];
     const de=document.getElementById('sd'+i); if(de) de.textContent=t.sd[i];
   }
@@ -515,6 +585,10 @@ function setLang(lang){
   document.getElementById('fb0').textContent=t.fa;
   document.getElementById('fb1').textContent=t.fd;
   document.getElementById('fb2').textContent=t.fu;
+  if(document.getElementById('fb4')) document.getElementById('fb4').textContent=t.freg;
+  if(document.getElementById('fb5')) document.getElementById('fb5').textContent=t.fkomp;
+  if(document.getElementById('fb6')) document.getElementById('fb6').textContent=t.fcharger;
+  if(document.getElementById('fb7')) document.getElementById('fb7').textContent=t.fsolar;
   document.getElementById('fb3').textContent=t.fr;
   document.getElementById('whyLbl').textContent=t.wlbl;
   document.getElementById('whyTtl').textContent=t.wttl;
